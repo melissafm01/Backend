@@ -15,12 +15,12 @@ const taskSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    place: {  
+    place: {  // Nuevo campo: lugar de la actividad
       type: String,
       required: true,
     },
-    responsible: {  
-      type: [String], 
+    responsible: {  // Nuevo campo: responsables
+      type: [String], // Array de strings para múltiples responsables
       required: false,
     },
     user: {
@@ -32,7 +32,7 @@ const taskSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-   
+    // Configuración de la promoción (opcional)
     promotion: {
       startDate: {
         type: Date,
@@ -43,7 +43,13 @@ const taskSchema = new mongoose.Schema(
         type: Date,
         default: null 
       },
-    }
+  
+     shareHistory: [{  //historial al publicar 
+    socialNetwork: String,
+    description: String,
+    sharedAt: { type: Date, default: Date.now }
+  }]
+}
   },
   {
     timestamps: true,
