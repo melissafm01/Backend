@@ -30,6 +30,11 @@ if (process.env.NODE_ENV === "production") {
     console.log(path.resolve("client", "dist", "index.html") );
     res.sendFile(path.resolve("client", "dist", "index.html"));
   });
+
+  app.get("/", (req, res) => {
+  res.send("¡Backend funcionando desde Render! 🚀");
+});
+
 }
 
 
