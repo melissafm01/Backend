@@ -4,10 +4,25 @@ export const createTaskSchema = z.object({
 
   title: z.string({
     required_error: "Title is required",
-  }),
-  
+  }) .max(90),
   description: z.string().optional(),
   date: z.string().optional(),
-  place: z.string().optional(), // Nuevo campo
-  responsible: z.array(z.string()).optional(), // Nuevo campo
+  place: z.string({
+    required_error: "place is required",
+  }) .max(40),
+  responsible: z.array(z.string().max(70)).optional(), 
+
+});
+
+
+// Nuevo esquema para la promoción
+export const promotionSchema = z.object({
+  isPromoted: z.boolean({
+    required_error: "isPromoted is required",
+  }),
+  promotion: z.object({
+    startDate: z.string().datetime().optional(),
+    endDate: z.string().datetime().optional(),
+
+  }).optional()
 });
