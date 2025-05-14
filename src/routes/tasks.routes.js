@@ -7,14 +7,17 @@ import {
   updateTask,
   getOthersTasks, //listar actividades de otros usuarios
   togglePromotion, //  activar/desactivar promoción
-  getPromotedTasks //obtener actividades promocionadas
-
+  getPromotedTasks, //obtener actividades promocionadas
+  generateShareLink  //publicar redes sociales 
 } from "../controllers/tasks.controllers.js";
 import { auth } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { createTaskSchema, promotionSchema } from "../schemas/task.schema.js";
+import { createTaskSchema, promotionSchema, shareSchema } from "../schemas/task.schema.js";
 
 const router = Router();
+
+//publicar en redes sociales
+router.post("/tasks/:id/share", auth, validateSchema(shareSchema), generateShareLink);
 
 // Nueva ruta para obtener actividades promocionadas
 router.get("/tasks/promoted", auth, getPromotedTasks);

@@ -26,3 +26,14 @@ export const promotionSchema = z.object({
 
   }).optional()
 });
+
+// pubicar en redes sociales
+export const shareSchema = z.object({
+  socialNetwork: z.enum(["twitter", "facebook", "instagram"], {
+    required_error: "Red social es requerida",
+    invalid_type_error: "Red social no válida"
+  }),
+  description: z.string().max(250, {
+    message: "La descripción no puede exceder 250 caracteres"
+  })
+});

@@ -62,7 +62,7 @@ export const getOthersTasks = async (req, res) => {
     const activities = await Task.find({
       user: { $ne: req.user.id },
     })
-      .populate("user", "email _id") 
+      .populate("user", "email _id") // Trae solo el email del usuario creador
       .select("-__v");
 
     res.json(activities);
@@ -74,7 +74,7 @@ export const getOthersTasks = async (req, res) => {
 export const getTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id)
-      .populate("user", "email _id") 
+      .populate("user", "email _id") // Muestra email del creador
       .select("-__v");
 
     if (!task)
@@ -134,5 +134,49 @@ export const getPromotedTasks = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error al obtener actividades promocionadas" });
+  }
+};
+
+// Añade esta función al final del archivo
+export const generateShareLink = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { socialNetwork, description } = req.body;
+    const userId = req.user.id;
+
+    // Verificar existencia de la tarea
+    const task = await Task.findById(id);
+    if (!task)
+      return res.status(404).json({ message: "Actividad no encontrada" });
+
+    // Generar URL base del frontend
+    const baseURL = process.env.BASE_FRONTEND_URL || "http://localhost:3000";
+    const taskURL = `${baseURL}/tasks/${id}`;
+
+    // Mapear redes sociales
+    const socialFormats = {
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        description
+      )}&url=${encodeURIComponent(taskURL)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        taskURL
+      )}&quote=${encodeURIComponent(description)}`,
+      instagram: `https://www.instagram.com/create/story?text=${encodeURIComponent(
+        description + " " + taskURL
+      )}`,
+    };
+
+    if (!socialFormats[socialNetwork]) {
+      return res.status(400).json({ message: "Red social no soportada" });
+    }
+
+    res.json({
+      success: true,
+      shareUrl: socialFormats[socialNetwork],
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error al generar enlace: " + error.message });
   }
 };
