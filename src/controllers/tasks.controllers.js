@@ -155,16 +155,9 @@ export const generateShareLink = async (req, res) => {
 
     // Mapear redes sociales
     const socialFormats = {
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-        description
-      )}&url=${encodeURIComponent(taskURL)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        taskURL
-      )}&quote=${encodeURIComponent(description)}`,
-      instagram: `https://www.instagram.com/create/story?text=${encodeURIComponent(
-        description + " " + taskURL
-      )}`,
-    };
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(description)}&url=${encodeURIComponent(taskURL)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(taskURL)}&quote=${encodeURIComponent(description)}`,
+      instagram: `https://www.instagram.com/create/story?text=${encodeURIComponent( description + " " + taskURL )}`,};
 
     if (!socialFormats[socialNetwork]) {
       return res.status(400).json({ message: "Red social no soportada" });
@@ -173,6 +166,7 @@ export const generateShareLink = async (req, res) => {
     res.json({
       success: true,
       shareUrl: socialFormats[socialNetwork],
+        image: task.image
     });
   } catch (error) {
     return res
