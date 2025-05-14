@@ -6,6 +6,7 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     description: {
       type: String,
       required: true,
@@ -14,18 +15,35 @@ const taskSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    place: {  // Nuevo campo: lugar de la actividad
+    place: {  
       type: String,
-      required: false,
+      required: true,
     },
-    responsible: {  // Nuevo campo: responsables
-      type: [String], // Array de strings para múltiples responsables
+    responsible: {  
+      type: [String], 
       required: false,
     },
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
     },
+   
+    isPromoted: {    // Nuevo campo para promoción
+      type: Boolean,
+      default: false
+    },
+   
+    promotion: {
+      startDate: {
+        type: Date,
+        default: null
+      },
+      // Fecha de fin de la promoción
+      endDate: {
+        type: Date,
+        default: null 
+      },
+    }
   },
   {
     timestamps: true,
