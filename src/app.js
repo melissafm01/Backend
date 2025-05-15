@@ -8,10 +8,13 @@ import { FRONTEND_URL } from "./config.js";
 
 const app = express();
 
+
 app.use(
   cors({
-    credentials: true,
     origin: FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Añade métodos permitidos
+    allowedHeaders: ["Content-Type", "Authorization"], // Añade headers permitidos
   })
 );
 
