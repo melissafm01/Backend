@@ -23,4 +23,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api", taksRoutes);
 
 
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Servidor PanascOOp-backend activo ',
+    endpoints: {
+      auth: '/api/auth',
+      tasks: '/api/tasks'
+    }
+  });
+});
+
 export default app;
