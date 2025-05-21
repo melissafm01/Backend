@@ -1,4 +1,4 @@
-import { Router } from "express";  // {router}  crea  enrrutador //
+import { Router } from "express";  // {router}  crea un enrrutador //
 
 
 import {

@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import taksRoutes from "./routes/tasks.routes.js";
 import { FRONTEND_URL } from "./config.js";
+import notificationRoutes from "./routes/notifications.routes.js";
+import attendanceRoutes from "./routes/attendance.routes.js";
 
 const app = express();
 
@@ -22,8 +24,10 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
 
+app.use("/api", notificationRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", taksRoutes);
+app.use("/api/attendances", attendanceRoutes);
 
 
 app.get('/', (req, res) => {

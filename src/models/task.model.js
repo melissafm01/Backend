@@ -6,7 +6,6 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
     description: {
       type: String,
       required: true,
@@ -17,7 +16,7 @@ const taskSchema = new mongoose.Schema(
     },
     place: {  // Nuevo campo: lugar de la actividad
       type: String,
-      required: true,
+      required:true,
     },
     responsible: {  // Nuevo campo: responsables
       type: [String], // Array de strings para múltiples responsables
@@ -27,7 +26,22 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
     },
-   
+    asistentes: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    estado: {
+      type: String,
+      enum: ["todas","promocionadas"],
+      default: "todas",
+    },
+    promocionada: {
+      type: Boolean,
+      default: false,
+    },
+
     isPromoted: {    // Nuevo campo para promoción
       type: Boolean,
       default: false
@@ -43,13 +57,7 @@ const taskSchema = new mongoose.Schema(
         type: Date,
         default: null 
       },
-  
-     shareHistory: [{  //historial al publicar 
-    socialNetwork: String,
-    description: String,
-    sharedAt: { type: Date, default: Date.now }
-  }]
-}
+    }
   },
   {
     timestamps: true,
