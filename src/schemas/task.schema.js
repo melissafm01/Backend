@@ -9,9 +9,8 @@ export const createTaskSchema = z.object({
   date: z.string().optional(),
   place: z.string({
     required_error: "place is required",
-  }) .max(40),
+  }) .max(30),
   responsible: z.array(z.string().max(70)).optional(), 
-
 });
 
 
@@ -25,15 +24,4 @@ export const promotionSchema = z.object({
     endDate: z.string().datetime().optional(),
 
   }).optional()
-});
-
-// pubicar en redes sociales
-export const shareSchema = z.object({
-  socialNetwork: z.enum(["twitter", "facebook", "instagram"], {
-    required_error: "Red social es requerida",
-    invalid_type_error: "Red social no válida"
-  }),
-  description: z.string().max(250, {
-    message: "La descripción no puede exceder 250 caracteres"
-  })
 });
