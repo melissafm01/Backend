@@ -49,6 +49,7 @@ export const register = async (req, res) => {
 
 
     res.json({
+       token,
       id: userSaved._id,
       username: userSaved.username,
       email: userSaved.email,
@@ -81,7 +82,8 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = await createAccessToken({                  // Crear el token de acceso (JWT)//
+    const token = await createAccessToken({  
+                      // Crear el token de acceso (JWT)//
       id: userFound._id,
       username: userFound.username,
     });
@@ -95,6 +97,7 @@ export const login = async (req, res) => {
     });
 
     res.json({
+      token,
       id: userFound._id,
       username: userFound.username,   //Finalmente, mandamos de vuelta la info del usuario (pero nunca la contraseña).//
       email: userFound.email,
@@ -109,8 +112,14 @@ export const login = async (req, res) => {
 
 export const verifyToken = async (req, res) => {
 
-  const { token } = req.cookies;                        //Aquí lee la cookie que se guardó en el navegador.//
-  if (!token) return res.send(false);
+ const authHeader = req.headers.authorization;
+
+if (!authHeader || !authHeader.startsWith("Bearer ")) {                   //.//
+  return res.status(401).json({ message: "No token provided" });
+}
+
+const token = authHeader.split(" ")[1];
+
 
 
   jwt.verify(token, TOKEN_SECRET, async (error, user) => {   //Si el token es válido y no ha expirado, te devuelve el payload //
@@ -128,6 +137,7 @@ export const verifyToken = async (req, res) => {
 
     //si todo va bien  //
     return res.json({
+      token,
       id: userFound._id,
       username: userFound.username,  //Si todo bien, devolvemos info del usuario
       email: userFound.email,
