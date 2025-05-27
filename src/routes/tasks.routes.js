@@ -1,14 +1,13 @@
 import { Router } from "express";
 import {
-  createTask,
+  createTask,  
   deleteTask,
   getTask,
   getTasks,
   updateTask,
-  getOthersTasks,
-  searchTask,
+  getOthersTasks, //listar  actividades de usuarios//
+  searchTask,    
   promoteTask,
- 
   togglePromotion, //  activar/desactivar promoción
   getPromotedTasks //obtener actividades promocionadas
 } 
@@ -20,10 +19,10 @@ import { createTaskSchema,  promotionSchema } from "../schemas/task.schema.js";
 
 const router = Router();
 
-// Nueva ruta para obtener actividades promocionadas
+//  ruta para obtener actividades promocionadas
 router.get("/tasks/promoted", auth, getPromotedTasks);
 
-// Nueva ruta para activar y desactivar promocion
+//  ruta para activar y desactivar promocion
 router.patch("/tasks/:id/promotion", auth, validateSchema(promotionSchema), togglePromotion);
 
 
@@ -38,8 +37,6 @@ router.put ("/tasks/:id/promote", promoteTask);
 //Creacion de actividades//
 router.get("/tasks", auth, getTasks);
 router.post("/tasks", auth, validateSchema(createTaskSchema), createTask);
-
-
 router.get("/tasks/:id", auth, getTask);
 router.put("/tasks/:id", auth, updateTask);
 router.delete("/tasks/:id", auth, deleteTask);
