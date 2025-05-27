@@ -14,6 +14,7 @@ export const auth = (req, res, next) => {
       if (error) return res.status(401).json({ message: "Token is not valid" });
 
       req.user = user; // <- el payload del token
+      req.userId = user.id || user._id
       next();
     });
   } catch (error) {

@@ -197,15 +197,6 @@ export const togglePromotion = async (req, res) => {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Actividad no encontrada" });
 
-    
-      // Validar fecha de la actividad
-    const currentDate = new Date();
-    if (new Date(task.date) < currentDate) {                     //ESTOOO//
-      return res.status(400).json({         
-        message: "No se puede modificar actividades pasadas"
-      });
-    }
-
     if (task.user.toString() !== req.user.id)
       return res.status(403).json({ message: "No tienes permiso para modificar esta actividad" });
 

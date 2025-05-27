@@ -27,7 +27,7 @@ const attendanceSchema = new mongoose.Schema({
   },
   confirmed: {
     type: Boolean,
-    default: true,
+    default: false,
   },
 }, { timestamps: true, 
   // asegura  que no hayan duplicados
