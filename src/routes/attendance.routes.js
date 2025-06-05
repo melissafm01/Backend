@@ -5,7 +5,8 @@ import {
   getAttendance,
   updateAttendance,
   deleteAttendance,
-  exportAttendance
+  exportAttendance,
+  checkAttendance
 } from "../controllers/attendance.controller.js";
 import { auth} from "../middlewares/auth.middleware.js";
 
@@ -19,5 +20,6 @@ router.get("/:taskId", auth, getAttendance);
 router.put("/:id", auth, updateAttendance);
 router.delete("/:id", auth, deleteAttendance);
 router.get("/export/:taskId", auth, exportAttendance);
+router.get('/check/:taskId', checkAttendance);
 
 export default router;

@@ -4,17 +4,18 @@ const attendanceSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: false, // Para usuarios logueados
+    required: false,
   },
   name: {
     type: String,
-    required: function() { return !this.user; }, // Requerido para invitados
+    required: true,
+    trim: true,
   },
   email: {
     type: String,
-    required: function() { return !this.user; }, // Requerido para invitados
-   lowercase: true,
-   trime: true,
+    required: true,
+    lowercase: true,
+    trim: true,
   },
   task: {
     type: mongoose.Schema.Types.ObjectId,
@@ -24,29 +25,17 @@ const attendanceSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
-  },
-  confirmed: {
-    type: Boolean,
-    default: false,
-  },
-}, { timestamps: true, 
-  // asegura  que no hayan duplicados
-  statics: {
-    async registerAttendance(data){
-      
-      const existing = await this.findOne({ 
-        $or:[
-          { user: data.user, task: data.task },
-          { email: data.email, task: data.task }
-        ]
-       });
-      if (existing) {
-        throw new Error("Ya confirmaste asistencia a esta tarea");
-      }
-      return this.create(data);
-    }
   }
+}, { timestamps: true });
 
-});
+// Índices únicos compuestos
+attendanceSchema.index(
+  { user: 1, task: 1 },
+  { unique: true, partialFilterExpression: { user: { $type: "objectId" } } }
+);
+attendanceSchema.index(
+  { email: 1, task: 1 },
+  { unique: true, partialFilterExpression: { email: { $type: "string" } } }
+);
 
 export default mongoose.model("Attendance", attendanceSchema);
