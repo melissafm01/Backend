@@ -4,7 +4,7 @@ export const createTaskSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   date: z.string().optional(),
-  place: z.string({ message: "place is required" }).max(30),
+  place: z.string(),
   responsible: z.array(z.string().max(70)).optional(),
 });
 
