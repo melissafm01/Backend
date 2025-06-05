@@ -5,7 +5,7 @@ export const createTaskSchema = z.object({
   description: z.string().optional(),
   date: z.string().optional(),
   place: z.string(),
-  responsible: z.array(z.string().max(70)).optional(),
+  responsible: z.array(),
 });
 
 // Nuevo esquema para la promoción
