@@ -13,24 +13,36 @@ export const getTasks = async (req, res) => {
   }
 };
 
+
 // Crear una nueva tarea
 export const createTask = async (req, res) => {
   try {
     const { title, description, date, place, responsible } = req.body;
+
+    const now = new Date();
+    const taskDate = new Date(date);
+
+    // Verificar que la fecha no sea pasada
+    if (taskDate < now.setHours(0, 0, 0, 0)) {
+      return res.status(400).json({ message: "No puedes crear una actividad con fecha pasada" });
+    }
+
     const newTask = new Task({
       title,
       description,
-      date,
+      date: taskDate,
       place,
       responsible,
       user: req.user.id,
     });
+
     await newTask.save();
     res.json(newTask);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 // Eliminar una tarea por ID
 export const deleteTask = async (req, res) => {
@@ -65,6 +77,19 @@ export const updateTask = async (req, res) => {
       promocionada: !!promocionada,
       estado: promocionada ? "promocionadas" : "todas",
     };
+
+  if (date) {
+      const newDate = new Date(date);
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // Eliminar horas para comparar solo fechas
+
+      if (newDate < now) {
+        return res.status(400).json({ message: "No puedes establecer una fecha pasada para la tarea" });
+      }
+
+      updateData.date = newDate;
+    }
+
 
     const taskUpdated = await Task.findByIdAndUpdate(req.params.id, updateData, { new: true });
     return res.json(taskUpdated);
@@ -106,25 +131,7 @@ export const getTask = async (req, res) => {
   }
 };
 
-// Promocionar una tarea
 
-export const promoteTask = async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id))
-      return res.status(400).json({ message: "ID inválido" });
-
-    const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ message: "Task not found" });
-
-    task.estado = "promocionada";
-    await task.save();
-
-    res.json({ message: "Tarea promocionada", task });
-  } catch (error) {
-    console.error("Error al promocionar tarea:", error.message);
-    res.status(500).json({ message: "Error interno del servidor" });
-  }
-};
 
 // Buscar tareas con filtros
 export const searchTask = async (req, res) => {

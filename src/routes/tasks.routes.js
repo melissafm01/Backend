@@ -7,7 +7,6 @@ import {
   updateTask,
   getOthersTasks, //listar  actividades de usuarios//
   searchTask,    
-  promoteTask,
   togglePromotion, //  activar/desactivar promoción
   getPromotedTasks //obtener actividades promocionadas
 } 
@@ -32,7 +31,7 @@ router.get("/tasks/others", auth, getOthersTasks);
 
 
 router.get("/tasks/search", auth, searchTask);
-router.put ("/tasks/:id/promote", promoteTask);
+
 
 //Creacion de actividades//
 router.get("/tasks", auth, getTasks);
