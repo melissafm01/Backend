@@ -22,6 +22,11 @@ const attendanceSchema = new mongoose.Schema({
     ref: "Task",
     required: true
   },
+
+  confirmed: {
+    type: Boolean,
+    default: true // Por defecto no confirmado
+  },
   date: {
     type: Date,
     default: Date.now,
@@ -33,6 +38,7 @@ attendanceSchema.index(
   { user: 1, task: 1 },
   { unique: true, partialFilterExpression: { user: { $type: "objectId" } } }
 );
+
 attendanceSchema.index(
   { email: 1, task: 1 },
   { unique: true, partialFilterExpression: { email: { $type: "string" } } }

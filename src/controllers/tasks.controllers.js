@@ -173,7 +173,7 @@ export const searchTask = async (req, res) => {
       .populate("asistentes", "username");
 
     const formattedTasks = tasks.map((task) => ({
-      id: task._id,
+      _id: task._id,
       title: task.title,
       description: task.description,
       date: task.date,
@@ -183,7 +183,9 @@ export const searchTask = async (req, res) => {
       user: {
         username: task.user?.username,
         email: task.user?.email,
+        _id: task.user?._id,
       },
+      isOwner: task.user?._id?.toString() === req.user.id, // <--- agrega esto
     }));
 
     res.json(formattedTasks);

@@ -1,3 +1,4 @@
+// routes/attendance.routes.js
 import express from "express";
 import {
   confirmAttendance,
@@ -6,20 +7,25 @@ import {
   updateAttendance,
   deleteAttendance,
   exportAttendance,
-  checkAttendance
+  checkAttendance,
+  getUserAttendances,
+
 } from "../controllers/attendance.controller.js";
-import { auth} from "../middlewares/auth.middleware.js";
+
+import {auth} from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// Rutas protegidas donde se requiere autenticación
-router.post("/confirm",auth, confirmAttendance);
-router.delete("/cancel/:taskId", cancelAttendance);
 
-router.get("/:taskId", auth, getAttendance);
+router.get("/mis-asistencias", auth, getUserAttendances); 
+router.get('/check/:taskId', checkAttendance);
+router.get("/export/:taskId", auth, exportAttendance);
+router.get("/:taskId", auth, getAttendance); // Esta debe ir después de las rutas específicas
+
+// Rutas de modificación
+router.post("/confirm", auth, confirmAttendance);
+router.delete("/cancel/:taskId", cancelAttendance);
 router.put("/:id", auth, updateAttendance);
 router.delete("/:id", auth, deleteAttendance);
-router.get("/export/:taskId", auth, exportAttendance);
-router.get('/check/:taskId', checkAttendance);
 
 export default router;

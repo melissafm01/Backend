@@ -204,3 +204,39 @@ export const checkAttendance = async (req, res) => {
     res.status(500).json({ message: "Error al verificar asistencia" });
   }
 };
+
+
+
+export const getUserAttendances = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.id);
+    const criteria = {
+      $or: [
+        { user: userId },
+        { email: req.user.email?.toLowerCase() }
+      ]
+    };
+
+    // 4. Búsqueda con validación de referencias
+    const attendances = await Attendance.find(criteria)
+      .populate({
+        path: 'task',
+        select: 'title date',
+        match: { _id: { $exists: true } } // Filtra tareas existentes
+      })
+      .lean();
+
+    // 5. Filtrado de resultados inconsistentes
+    const validAttendances = attendances.filter(att => 
+      att.task !== null && 
+      (att.user?.toString() === req.user.id || att.email === req.user.email?.toLowerCase())
+    );
+
+    res.json(validAttendances);
+  } catch (error) {
+    res.status(500).json({ 
+      message: "Error al obtener asistencias",
+      error: error.message
+    });
+  }
+};
