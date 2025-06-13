@@ -37,10 +37,7 @@ const taskSchema = new mongoose.Schema(
       enum: ["todas","promocionadas"],
       default: "todas",
     },
-    promocionada: {
-      type: Boolean,
-      default: false,
-    },
+  
 
     isPromoted: {    // Nuevo campo para promoción
       type: Boolean,
