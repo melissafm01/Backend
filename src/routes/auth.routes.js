@@ -1,13 +1,13 @@
 import { Router } from "express"; 
-
-
 import {
   login,
   logout,
   register,
   verifyToken,
   registerAdmin,
-  createInitialSuperAdmin // <- Crear super admin inicial
+  createInitialSuperAdmin , // <- Crear super admin inicial
+ /*loginWithGoogle,
+ sendPasswordResetEmail*/
 } from "../controllers/auth.controller.js";
 
 import { authorizeRoles } from "../middlewares/role.middleware.js";
@@ -29,5 +29,6 @@ router.post("/register", validateSchema(registerSchema), register);
 router.post("/login", validateSchema(loginSchema), login);
 router.get("/verify", verifyToken);
 router.post("/logout",  logout);
-
+/*router.post("/google", loginWithGoogle);
+router.post("/password-reset", sendPasswordResetEmail);*/
 export default router;

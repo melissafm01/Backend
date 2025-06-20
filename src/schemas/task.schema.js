@@ -6,7 +6,8 @@ export const createTaskSchema = z.object({
   description: z.string().optional(),
   date: z.string().optional(),
   place: z.string({ required_error: "place is required", }) .max(30),
-  responsible: z.array(z.string().max(70)).optional(), 
+   responsible: z.string({ required_error: "Responsable es requerido", })
+  //responsible: z.array(z.string().max(70)).optional(), 
 });
 
 

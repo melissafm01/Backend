@@ -1,3 +1,4 @@
+
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -14,7 +15,7 @@ export const register = async (req, res) => {
 
     if (userFound)
       return res.status(400).json({
-        message: ["The email is already in use"],
+        message: ["El correo electrónico ya está en uso"],
       });
 
       
@@ -68,13 +69,21 @@ export const login = async (req, res) => {
 
     if (!userFound)
       return res.status(400).json({
-        message: ["The email does not exist"],      //en caso de q el email.no exista//
+        message: ["El correo electrónico no existe"],      //en caso de q el email.no exista//
       });
+
+    // Verificar si el usuario está activo
+    if (!userFound.isActive) {
+      return res.status(403).json({
+        message: ["Su cuenta ha sido desactivada. Por favor, contacte con el servicio de asistencia."],
+      });
+    }
+
 
     const isMatch = await bcrypt.compare(password, userFound.password);          //comparamos la contraseña normal con la haseada si coinciden es correscta //
     if (!isMatch) {
       return res.status(400).json({
-        message: ["The password is incorrect"],
+        message: ["La contraseña es incorrecta "],
       });
     }
 
@@ -118,9 +127,7 @@ export const verifyToken = async (req, res) => {
 
     //Buscar al usuario en la base de datos
     const userFound = await User.findById(user.id);  
-
-    if (!userFound) 
-    return res.sendStatus(401);  
+  if (!userFound || !userFound.isActive)  return res.sendStatus(401);  
 
 
     //si todo va bien  //
@@ -148,7 +155,7 @@ export const createInitialSuperAdmin = async (req, res) => {
     
     if (secretKey !== SUPER_ADMIN_SECRET) {
       return res.status(403).json({ 
-        message: ["Invalid secret key"] 
+        message: ["Clave secreta no válida"] 
       });
     }
 
@@ -156,7 +163,7 @@ export const createInitialSuperAdmin = async (req, res) => {
     const existingSuperAdmin = await User.findOne({ role: "superadmin" });
     if (existingSuperAdmin) {
       return res.status(400).json({ 
-        message: ["Super admin already exists"] 
+        message: ["El superadministrador ya existe"] 
       });
     }
 
@@ -164,7 +171,7 @@ export const createInitialSuperAdmin = async (req, res) => {
     const userFound = await User.findOne({ email });
     if (userFound) {
       return res.status(400).json({ 
-        message: ["Email is already taken"] 
+        message: ["El correo electrónico ya está en uso"] 
       });
     }
 
@@ -202,7 +209,7 @@ export const createInitialSuperAdmin = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error creating super admin:", error);
+    console.error("Error al crear superadministrador:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -255,4 +262,42 @@ export const logout = async (req, res) => {
   });
   return res.sendStatus(200);
 };
-  
+/*
+export const loginWithGoogle = async (req, res) => {
+  const { idToken } = req.body;
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { id, name, email } = decodedToken;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({ name, email, googleId: id });
+    }
+
+    // Ahora genera tu propio JWT
+    const token = generateJWT(user); // <-- tu función JWT
+
+    res.json({ token, user });
+  } catch (error) {
+    res.status(401).json({ message: "Token inválido de Google" });
+  }
+};
+
+// si el usuario olvida la contraseña, puede solicitar un enlace de restablecimiento por medio de su corrreo y gracias a firebase se le enviara un enlace para que pueda restablecer su contraseña
+
+
+export const sendPasswordResetEmail = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const link = await getAuth().generatePasswordResetLink(email);
+    // Aquí podrías enviar este link por correo usando nodemailer (opcional)
+    res.json({ message: "Enlace de recuperación generado", resetLink: link });
+  } catch (error) {
+    console.error("Error al generar el enlace de recuperación:", error);
+    res.status(400).json({ message: "Error al enviar enlace de recuperación" });
+  }
+};
+  */

@@ -15,6 +15,7 @@ export const getAllAdmins = async (req, res) => {
   }
 };
 
+
 // Obtener un administrador específico
 export const getAdminById = async (req, res) => {
   try {
@@ -23,7 +24,7 @@ export const getAdminById = async (req, res) => {
       .select('-password');
     
     if (!admin) {
-      return res.status(404).json({ message: "Administrator not found" });
+      return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
     res.json(admin);
@@ -41,7 +42,7 @@ export const updateAdmin = async (req, res) => {
     // Verificar que el administrador existe
     const admin = await User.findOne({ _id: id, role: "admin" });
     if (!admin) {
-      return res.status(404).json({ message: "Administrator not found" });
+      return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
     // Verificar que el email no esté siendo usado por otro usuario
@@ -70,7 +71,7 @@ export const updateAdmin = async (req, res) => {
     ).select('-password');
     
     res.json({
-      message: "Administrator updated successfully",
+      message: "Administrador actualizado con éxito",
       admin: updatedAdmin
     });
   } catch (error) {
@@ -85,7 +86,7 @@ export const deactivateAdmin = async (req, res) => {
     
     const admin = await User.findOne({ _id: id, role: "admin" });
     if (!admin) {
-      return res.status(404).json({ message: "Administrator not found" });
+      return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
     const deactivatedAdmin = await User.findByIdAndUpdate(
@@ -95,7 +96,7 @@ export const deactivateAdmin = async (req, res) => {
     ).select('-password');
     
     res.json({
-      message: "Administrator deactivated successfully",
+      message: "Administrador desactivado exitosamente",
       admin: deactivatedAdmin
     });
   } catch (error) {
@@ -110,7 +111,7 @@ export const reactivateAdmin = async (req, res) => {
     
     const user = await User.findOne({ _id: id, role: "user" });
     if (!user) {
-      return res.status(404).json({ message: "User not found or already an administrator" });
+      return res.status(404).json({ message: "Usuario no encontrado o ya es administrador" });
     }
     
     const reactivatedAdmin = await User.findByIdAndUpdate(
@@ -120,7 +121,7 @@ export const reactivateAdmin = async (req, res) => {
     ).select('-password');
     
     res.json({
-      message: "Administrator reactivated successfully",
+      message: "Administrador reactivado exitosamente",
       admin: reactivatedAdmin
     });
   } catch (error) {
@@ -135,16 +136,25 @@ export const deleteAdmin = async (req, res) => {
     
     const admin = await User.findOne({ _id: id, role: "admin" });
     if (!admin) {
-      return res.status(404).json({ message: "Administrator not found" });
+      return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
-    await User.findByIdAndDelete(id);
+   // Solo actualiza isActive, mantiene el rol "admin"
+    const deactivatedAdmin = await User.findByIdAndUpdate(
+      id,
+      { isActive: false },
+      { new: true }
+    ).select('-password');
     
-    res.json({ message: "Administrator deleted successfully" });
+    res.json({
+      message: "Administrador desactivado exitosamente (rol conservado)",
+      admin: deactivatedAdmin
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 // Obtener estadísticas de administradores
 export const getAdminStats = async (req, res) => {

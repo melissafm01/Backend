@@ -54,6 +54,8 @@ const existing = await Attendance.findOne({
   }
 };
 
+
+
 // Cancelar asistencia
 export const cancelAttendance = async (req, res) => {
   try {

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Task from "../models/task.model.js";
+import { bucket } from "../config/firebase.js";
 
 // Obtener todas las tareas del usuario actual
 export const getTasks = async (req, res) => {
@@ -17,32 +18,127 @@ export const getTasks = async (req, res) => {
 // Crear una nueva tarea
 export const createTask = async (req, res) => {
   try {
-    const { title, description, date, place, responsible } = req.body;
+    console.log("=== DEBUG: Datos recibidos ===");
+    console.log("req.body:", req.body);
+    console.log("req.file:", req.file);
 
-    const now = new Date();
-    const taskDate = new Date(date);
-
-    // Verificar que la fecha no sea pasada
-    if (taskDate < now.setHours(0, 0, 0, 0)) {
-      return res.status(400).json({ message: "No puedes crear una actividad con fecha pasada" });
+    const { title, description, place, date } = req.body;
+    
+    // === Procesar responsible ===
+    let responsible = [];
+    if (req.body.responsible) {
+      try {
+        // Si viene como string JSON, parsearlo
+        if (typeof req.body.responsible === 'string') {
+          responsible = JSON.parse(req.body.responsible);
+        } else if (Array.isArray(req.body.responsible)) {
+          responsible = req.body.responsible;
+        }
+        console.log("Responsible procesado:", responsible);
+      } catch (parseError) {
+        console.error("Error al parsear responsible:", parseError);
+        // Si falla el parse, tratarlo como string simple
+        responsible = req.body.responsible ? [req.body.responsible] : [];
+      }
     }
 
-    const newTask = new Task({
+    // === Validación de campos requeridos ===
+    if (!title || !title.trim()) {
+      return res.status(400).json({ message: 'El título es requerido' });
+    }
+
+    // === Validación de fecha ===
+    if (!date) {
+      return res.status(400).json({ message: 'La fecha es requerida' });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const taskDate = new Date(date);
+
+    if (taskDate < today) {
+      return res.status(400).json({ message: 'No puedes crear actividades con fecha pasada' });
+    }
+
+    // === Subida de imagen ===
+    let imageUrl = null;
+
+    if (req.file) {
+      console.log("=== Procesando imagen ===");
+      console.log("File info:", {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
+
+      const filename = `task-images/${Date.now()}_${req.file.originalname}`;
+      const blob = bucket.file(filename);
+
+      const blobStream = blob.createWriteStream({
+        metadata: {
+          contentType: req.file.mimetype,
+        },
+      });
+
+      await new Promise((resolve, reject) => {
+        blobStream.on('error', reject);
+        blobStream.on('finish', async () => {
+          await blob.makePublic();
+          imageUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+          console.log("Imagen subida exitosamente:", imageUrl);
+          resolve();
+        });
+        blobStream.end(req.file.buffer);
+      });
+    } else {
+      console.log("=== Sin imagen - continuando sin imagen ===");
+    }
+
+    // === Crear la tarea en la base de datos ===
+    console.log("=== Creando tarea en BD ===");
+    console.log("Datos a guardar:", {
       title,
       description,
-      date: taskDate,
       place,
+      date: taskDate,
       responsible,
-      user: req.user.id,
+      image: imageUrl,
+      user: req.user.id
     });
 
-    await newTask.save();
-    res.json(newTask);
+    const newTask = await Task.create({
+      title: title.trim(),
+      description: description?.trim() || '',
+      place: place?.trim() || '',
+      date: taskDate,
+      responsible: responsible,
+      image: imageUrl,
+      user: req.user.id,
+      status: 'pending'
+    });
+
+    const populatedTask = await newTask.populate('user', 'username email');
+
+    console.log("=== Tarea creada exitosamente ===");
+    console.log("Tarea creada:", populatedTask);
+
+    res.status(201).json({ 
+      message: 'Actividad creada con éxito', 
+      task: populatedTask 
+    });
+
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.error('=== ERROR en createTask ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Full error:', error);
+    
+    res.status(500).json({ 
+      message: 'Error al crear la actividad',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
-
 
 // Eliminar una tarea por ID
 export const deleteTask = async (req, res) => {
@@ -101,7 +197,7 @@ export const updateTask = async (req, res) => {
 // Obtener actividades de otros usuarios
 export const getOthersTasks = async (req, res) => {
   try {
-    const activities = await Task.find({ user: { $ne: req.user.id } })
+    const activities = await Task.find({ user: { $ne: req.user.id }, status: 'approved' })
       .populate("user", "email _id")
       .select("-__v");
 
@@ -138,7 +234,7 @@ export const searchTask = async (req, res) => {
 
   try {
     const { q, date, place, estado } = req.query;
-    const filters = {};
+    const filters = { status: 'approved'};
    
     if (q) {
       filters.$or = [
@@ -169,7 +265,7 @@ export const searchTask = async (req, res) => {
     }
 
     const tasks = await Task.find(filters)
-      .populate("user", "username email")
+      .populate("user", "username email _id")
       .populate("asistentes", "username");
 
     const formattedTasks = tasks.map((task) => ({
@@ -179,6 +275,9 @@ export const searchTask = async (req, res) => {
       date: task.date,
       place: task.place,
       estado: task.estado,
+      isPromoted: task.isPromoted,
+      image: task.image, 
+      responsible: task.responsible,
       totalAsistentes: task.asistentes?.length || 0,
       user: {
         username: task.user?.username,
@@ -206,8 +305,12 @@ export const togglePromotion = async (req, res) => {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Actividad no encontrada" });
 
-    if (task.user.toString() !== req.user.id)
-      return res.status(403).json({ message: "No tienes permiso para modificar esta actividad" });
+const isOwner = task.user.toString() === req.user.id;
+const isAdmin = req.user.role === "admin" || req.user.role === "superadmin";
+
+if (!isOwner && !isAdmin)
+  return res.status(403).json({ message: "No tienes permiso para modificar esta actividad" });
+
 
     const updatedTask = await Task.findByIdAndUpdate(
       req.params.id,

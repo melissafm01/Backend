@@ -1,5 +1,3 @@
-
-
 import admin from 'firebase-admin';
 import { readFileSync } from 'fs';
 import path from 'path';
@@ -7,13 +5,17 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-//  Asegura que estás obteniendo la ruta correcta al archivo JSON
-const serviceAccountPath = path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT_PATH);
+let serviceAccount;
 
-// Lee y parsea el archivo de credenciales
-const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf-8'));
+if (process.env.FIREBASE_CONFIG) {
+  // ✅ En producción (Render): lee desde variable de entorno
+  serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG);
+} else {
+  // ✅ En local: lee desde archivo
+  const serviceAccountPath = path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT_PATH);
+  serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf-8'));
+}
 
-//  Inicializa la app de Firebase Admin (solo una vez)
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -21,8 +23,6 @@ if (!admin.apps.length) {
   });
 }
 
-//  Obtén el bucket de Firebase Storage
 const bucket = admin.storage().bucket();
 
-//  Exporta el bucket para usarlo en controladores
-export { bucket };
+export { admin, bucket };

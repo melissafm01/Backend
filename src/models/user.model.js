@@ -20,11 +20,42 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin", "superadmin"],
       default: "user",
     },
+
+       isActive: {
+      type: Boolean,
+      default: true,
+      index: true
+    },
+
+    lastInteraction: {
+    type: Date,
+    default: Date.now
+  },
+    lastLogin: Date,
+
+    profile: {
+      firstName: String,
+      lastName: String,
+      bio: String,
+    }
   },
   {
     timestamps: true,
+   toJSON: {
+      transform: function(doc, ret) {
+        delete ret.__v;
+        delete ret.password;
+        return ret;
+      }
+    }
   }
 );
+
+
+// Índices para búsquedas rápidas
+userSchema.index({ username: 'text', email: 'text' });
+userSchema.index({ role: 1, isActive: 1 });
+
 
 export default mongoose.model("User", userSchema); 
 
