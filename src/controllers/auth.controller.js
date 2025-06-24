@@ -38,7 +38,7 @@ export const register = async (req, res) => {
     });
 
 
-    // guardar el token en la cookie
+    // guardar el token en la cookieee
     res.cookie("token", token, {
       httpOnly: process.env.NODE_ENV !== "development",
       secure: true,
