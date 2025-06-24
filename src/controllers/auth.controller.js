@@ -39,11 +39,14 @@ export const register = async (req, res) => {
 
 
     // guardar el token en la cookieee
-    res.cookie("token", token, {
-      httpOnly: process.env.NODE_ENV !== "development",
-      secure: true,
-      sameSite: "none",
-    });
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "None",
+  path: "/",        
+  maxAge: 1000 * 60 * 60 * 24, 
+});
+
 
 
     res.json({
@@ -94,11 +97,15 @@ export const login = async (req, res) => {
 
 
     //Guardar el token en una cookie//
-    res.cookie("token", token, {
-      httpOnly: process.env.NODE_ENV !== "development",      
-      secure: true,       // HTTPS.//
-      sameSite: "none",      
-    });
+  
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "None",
+  path: "/",          
+ maxAge: 1000 * 60 * 60 * 24, 
+});
+
 
     res.json({
       id: userFound._id,
@@ -192,11 +199,14 @@ export const createInitialSuperAdmin = async (req, res) => {
       username: superAdminSaved.username,
     });
 
-    res.cookie("token", token, {
-      httpOnly: process.env.NODE_ENV !== "development",
-      secure: true,
-      sameSite: "none",
-    });
+ res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "None",
+  path: "/",           
+  maxAge: 1000 * 60 * 60 * 24, l
+});
+
 
     res.status(201).json({
       message: "Superadministrador creado exitosamente",
@@ -256,12 +266,17 @@ export const registerAdmin = async (req, res) => {
 
 export const logout = async (req, res) => {
   res.cookie("token", "", {
-    httpOnly: true,    //servidor//
-    secure: true,    //https//
-    expires: new Date(0),  
+    httpOnly: true,
+    secure: true,
+    sameSite: "None", // Necesario para que se envíen cookies en peticiones cross-site
+    path: "/",         // Asegura que la cookie se borre desde toda la app
+    expires: new Date(0), // Expira inmediatamente
   });
   return res.sendStatus(200);
-};
+};;
+
+ 
+
 /*
 export const loginWithGoogle = async (req, res) => {
   const { idToken } = req.body;
