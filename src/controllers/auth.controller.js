@@ -270,49 +270,9 @@ export const logout = async (req, res) => {
     secure: true,
     sameSite: "None", 
     path: "/",        
-    expires: new Date(0), // Expira inmediatamente
+    expires: new Date(0),
   });
   return res.sendStatus(200);
 };;
 
  
-
-/*
-export const loginWithGoogle = async (req, res) => {
-  const { idToken } = req.body;
-
-  try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const { id, name, email } = decodedToken;
-
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      user = await User.create({ name, email, googleId: id });
-    }
-
-    // Ahora genera tu propio JWT
-    const token = generateJWT(user); // <-- tu función JWT
-
-    res.json({ token, user });
-  } catch (error) {
-    res.status(401).json({ message: "Token inválido de Google" });
-  }
-};
-
-// si el usuario olvida la contraseña, puede solicitar un enlace de restablecimiento por medio de su corrreo y gracias a firebase se le enviara un enlace para que pueda restablecer su contraseña
-
-
-export const sendPasswordResetEmail = async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    const link = await getAuth().generatePasswordResetLink(email);
-    // Aquí podrías enviar este link por correo usando nodemailer (opcional)
-    res.json({ message: "Enlace de recuperación generado", resetLink: link });
-  } catch (error) {
-    console.error("Error al generar el enlace de recuperación:", error);
-    res.status(400).json({ message: "Error al enviar enlace de recuperación" });
-  }
-};
-  */

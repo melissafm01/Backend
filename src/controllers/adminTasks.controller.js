@@ -2,13 +2,13 @@ import Task from "../models/task.model.js";
 import User from "../models/user.model.js";
 import mongoose from "mongoose";
 
-// Obtener todas las actividades (con filtros)
+// Obtener todas las actividades
 export const getAllActivities = async (req, res) => {
   try {
     const { status, promoted, search, date } = req.query;
     const filters = {};
 
-    // Filtros
+    // filtros
     if (status && ['pending', 'approved', 'rejected'].includes(status)) {
       filters.status = status;
     }

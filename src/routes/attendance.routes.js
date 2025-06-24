@@ -20,7 +20,7 @@ const router = express.Router();
 router.get("/mis-asistencias", auth, getUserAttendances); 
 router.get('/check/:taskId', checkAttendance);
 router.get("/export/:taskId", auth, exportAttendance);
-router.get("/:taskId", auth, getAttendance); // Esta debe ir después de las rutas específicas
+router.get("/:taskId", auth, getAttendance); 
 
 // Rutas de modificación
 router.post("/confirm", auth, confirmAttendance);

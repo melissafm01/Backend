@@ -11,7 +11,7 @@ export const createTaskSchema = z.object({
 });
 
 
-// Nuevo esquema para la promoción
+// esquema para la promoción
 export const promotionSchema = z.object({
   isPromoted: z.boolean({
     required_error: "isPromoted is required",

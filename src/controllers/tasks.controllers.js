@@ -177,7 +177,7 @@ export const updateTask = async (req, res) => {
   if (date) {
       const newDate = new Date(date);
       const now = new Date();
-      now.setHours(0, 0, 0, 0); // Eliminar horas para comparar solo fechas
+      now.setHours(0, 0, 0, 0);
 
       if (newDate < now) {
         return res.status(400).json({ message: "No puedes establecer una fecha pasada para la tarea" });
@@ -284,7 +284,7 @@ export const searchTask = async (req, res) => {
         email: task.user?.email,
         _id: task.user?._id,
       },
-      isOwner: task.user?._id?.toString() === req.user.id, // <--- agrega esto
+      isOwner: task.user?._id?.toString() === req.user.id,
     }));
 
     res.json(formattedTasks);
@@ -316,7 +316,7 @@ if (!isOwner && !isAdmin)
       req.params.id,
       {
         isPromoted,
-        estado: isPromoted ? "promocionadas" : "todas", // ✅ aquí el cambio
+        estado: isPromoted ? "promocionadas" : "todas",
         ...(promotion && { promotion }),
       },
       { new: true }

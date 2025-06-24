@@ -1,4 +1,3 @@
-// adminDashboard.controller.js
 import Task from "../models/task.model.js";
 import User from "../models/user.model.js";
 import Attendance from "../models/attendance.model.js";

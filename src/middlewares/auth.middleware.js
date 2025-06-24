@@ -13,10 +13,10 @@ export const auth = async (req, res, next) => {
       return res.status(401).json({ message: "No token, authorization denied" });
     }
 
-    // Verificación sin callback (más clara para await/async)
+  
     const decoded = jwt.verify(token, TOKEN_SECRET);
 
-    // Cargar usuario desde DB, sin contraseña
+   
     const user = await User.findById(decoded.id).select("-password").lean();
 
     if (!user) {
@@ -31,7 +31,7 @@ export const auth = async (req, res, next) => {
       email: user.email || null,
       name: user.name || null,
       role: user.role || null,
-      ...decoded, // Añade cualquier otra propiedad del token (ej: expiración, etc.)
+      ...decoded,
     };
 
     req.userId = user._id;

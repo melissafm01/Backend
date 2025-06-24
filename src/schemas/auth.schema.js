@@ -31,7 +31,7 @@ export const loginSchema = z.object({
 });
 
 
-// Nuevo schema para crear super admin
+// crear super admin
 export const superAdminSchema = z.object({
   username: z.string({
     required_error: "Username is required",

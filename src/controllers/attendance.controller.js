@@ -16,16 +16,19 @@ export const confirmAttendance = async (req, res) => {
     const attendanceData = { task: taskId };
 
     if (isAuthenticated && isManual) {
+
       // Usuario autenticado registrando manualmente a otro
       attendanceData.name = name;
       attendanceData.email = email.toLowerCase();
     } else if (isAuthenticated && !isCreator) {
+
       // Usuario autenticado que no es el creador
       attendanceData.user = req.user.id;
       attendanceData.name = req.user.name || name;
       attendanceData.email = req.user.email || email;
     } else if (!isAuthenticated) {
-      // Invitado
+   
+      
       if (!name || !email) return res.status(400).json({ message: "Nombre y correo requeridos para invitados" });
       attendanceData.name = name;
       attendanceData.email = email.toLowerCase();

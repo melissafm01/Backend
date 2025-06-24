@@ -49,7 +49,7 @@ export const deleteNotification = async (req, res) => {
   try {
     const notification = await Notification.findOneAndDelete({
       _id: req.params.id,
-      user: req.userId // Evita que un usuario borre notificaciones ajenas
+      user: req.userId 
     });
 
     if (!notification) {
