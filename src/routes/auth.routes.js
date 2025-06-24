@@ -21,8 +21,8 @@ const router = Router();
 router.post("/superadmin/create",validateSchema(superAdminSchema), createInitialSuperAdmin);
 
 
-router.post( "/admin/register", auth, // <- debe estar autenticado
-  authorizeRoles("superadmin"), // <- solo superadmin puede hacer esto
+router.post( "/admin/register", auth, //  debe estar autenticado
+  authorizeRoles("superadmin"), //  solo superadmin puede hacer esto
   validateSchema(registerSchema),registerAdmin);
 
 router.post("/register", validateSchema(registerSchema), register);

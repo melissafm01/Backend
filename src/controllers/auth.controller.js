@@ -72,7 +72,7 @@ export const login = async (req, res) => {
 
     if (!userFound)
       return res.status(400).json({
-        message: ["El correo electrónico no existe"],      //en caso de q el email.no exista//
+        message: ["El correo electrónico no existe"],     
       });
 
     // Verificar si el usuario está activo
@@ -83,14 +83,14 @@ export const login = async (req, res) => {
     }
 
 
-    const isMatch = await bcrypt.compare(password, userFound.password);          //comparamos la contraseña normal con la haseada si coinciden es correscta //
+    const isMatch = await bcrypt.compare(password, userFound.password);    
     if (!isMatch) {
       return res.status(400).json({
         message: ["La contraseña es incorrecta "],
       });
     }
 
-    const token = await createAccessToken({                  // Crear el token de acceso (JWT)//
+    const token = await createAccessToken({                
       id: userFound._id,
       username: userFound.username,
     });
@@ -123,11 +123,11 @@ res.cookie("token", token, {
 
 export const verifyToken = async (req, res) => {
 
-  const { token } = req.cookies;                        //Aquí lee la cookie que se guardó en el navegador.//
+  const { token } = req.cookies;                     
   if (!token) return res.send(false);
 
 
-  jwt.verify(token, TOKEN_SECRET, async (error, user) => {   //Si el token es válido y no ha expirado, te devuelve el payload //
+  jwt.verify(token, TOKEN_SECRET, async (error, user) => {  
     if (error) return res.sendStatus(401);
 
 
@@ -268,8 +268,8 @@ export const logout = async (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
     secure: true,
-    sameSite: "None", // Necesario para que se envíen cookies en peticiones cross-site
-    path: "/",         // Asegura que la cookie se borre desde toda la app
+    sameSite: "None", 
+    path: "/",        
     expires: new Date(0), // Expira inmediatamente
   });
   return res.sendStatus(200);
