@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import Notification from "../models/notification.model.js";
-import User from "../models/user.model.js";
+import User from "../models/user.model.js"; 
 import { sendPushNotification } from "../libs/sendPushNotification.js";
 
 export const saveNotificationConfig = async (req, res) => {
@@ -39,14 +39,14 @@ export const saveNotificationConfig = async (req, res) => {
 };
 
 export const getUserNotifications = async (req, res) => {
-        try{
-            const configs = await Notification.find({user: req.user.id}).populate("task");
-            res.json(configs);
-        }catch(err){
-         console.error("Error al obtener configuraciones:", err);
-        res.status(500).json({message: "Error al obtener configuraciones", error: err.message});
-        }
-    }
+  try {
+    const configs = await Notification.find({ user: req.user.id }).populate("task");
+    res.json(configs);
+  } catch (err) {
+    console.error("Error al obtener configuraciones:", err);
+    res.status(500).json({ message: "Error al obtener configuraciones", error: err.message });
+  }
+};
 
 export const deleteNotification = async (req, res) => {
   try {
@@ -61,7 +61,7 @@ export const deleteNotification = async (req, res) => {
 
     res.status(200).json({ message: "Notificación eliminada correctamente" });
   } catch (error) {
-   console.error("Error al eliminar notificación:", error);
+    console.error("Error al eliminar notificación:", error);
     res.status(500).json({ message: "Error al eliminar notificación" });
   }
 };
@@ -99,4 +99,6 @@ export const updateNotification = async (req, res) => {
     });
   }
 };
+
+
 

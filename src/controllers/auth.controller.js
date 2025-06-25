@@ -85,6 +85,12 @@ export const login = async (req, res) => {
       });
     }
 
+  // Actualizar fechas de login e interacción
+    userFound.lastLogin = new Date();
+    userFound.lastInteraction = new Date();
+    await userFound.save();
+
+
     const token = await createAccessToken({
       id: userFound._id,
       username: userFound.username,
@@ -99,7 +105,7 @@ res.cookie("token", token, {
 });
 
 
-    res.json({
+  res.json({
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
@@ -110,7 +116,6 @@ res.cookie("token", token, {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 
 
@@ -176,6 +181,7 @@ export const verifyEmail = async (req, res) => {
       id: user._id,
       username: user.username,
     });
+
 
 res.cookie("token", token_jwt, {
   httpOnly: true,
@@ -261,7 +267,6 @@ export const resendVerificationEmail = async (req, res) => {
 
 
 
-
 // CREAR SUPER ADMIN INICIAL //
 
 
@@ -277,7 +282,6 @@ export const createInitialSuperAdmin = async (req, res) => {
       });
     }
 
-    // Verificar si ya existe un super admin
     const existingSuperAdmin = await User.findOne({ role: "superadmin" });
     if (existingSuperAdmin) {
       return res.status(400).json({ 
@@ -300,12 +304,11 @@ export const createInitialSuperAdmin = async (req, res) => {
       password: passwordHash,
       role: "superadmin",
       isVerified: true,
-      isActive: true, //  Asegurar que esté activo
+      isActive: true,
     });
 
     const superAdminSaved = await newSuperAdmin.save();
 
-    // Crear token para login automático
     const token = await createAccessToken({
       id: superAdminSaved._id,
       username: superAdminSaved.username,
@@ -320,7 +323,7 @@ export const createInitialSuperAdmin = async (req, res) => {
 });
 
 
-    res.status(201).json({
+     res.status(201).json({
       message: "Superadministrador creado exitosamente",
       user: {
         id: superAdminSaved._id,
@@ -335,7 +338,6 @@ export const createInitialSuperAdmin = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 
 
@@ -357,19 +359,19 @@ export const registerAdmin = async (req, res) => {
       password: passwordHash,
       role: "admin",
       isVerified: true,
-      isActive: true, 
+      isActive: true,
     });
 
     const adminSaved = await newAdmin.save();
 
     res.status(201).json({
-      message: "Admin creado con exito",
+      message: "Admin creado con éxito",
       user: {
-      id: adminSaved._id,
-      username: adminSaved.username,
-      email: adminSaved.email,
-      role: adminSaved.role,
-       }
+        id: adminSaved._id,
+        username: adminSaved.username,
+        email: adminSaved.email,
+        role: adminSaved.role,
+      }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -390,3 +392,169 @@ export const logout = async (req, res) => {
 };;
 
  
+
+export const loginWithGoogle = async (req, res) => {
+  const { idToken } = req.body;
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { uid, name, email } = decodedToken;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({
+        username: name || email.split('@')[0],
+        email,
+        googleId: uid,
+        isVerified: true,
+        isActive: true,
+        role: 'user',
+        password: 'google-oauth-user' // Placeholder para usuarios de Google
+      });
+      await user.save();
+    }
+
+    // Actualizar último login
+    user.lastLogin = new Date();
+    user.lastInteraction = new Date();
+    await user.save();
+
+    const token = await createAccessToken({
+      id: user._id,
+      username: user.username,
+    });
+
+     res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "None",
+  path: "/",           
+  maxAge: 1000 * 60 * 60 * 24, l
+});
+
+    res.json({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    });
+  } catch (error) {
+    console.error("Error en login con Google:", error);
+    res.status(401).json({ message: "Token inválido de Google" });
+  }
+};
+
+
+export const sendPasswordResetEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Validar que el email esté presente
+    if (!email) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Email es requerido" 
+      });
+    }
+
+    // Buscar el usuario en tu base de datos
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ 
+        success: false,
+        message: "No existe una cuenta con este correo electrónico" 
+      });
+    }
+
+    // Generar token de restablecimiento
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    
+    // Guardar el token en el usuario 
+    user.passwordResetToken = resetToken;
+    user.passwordResetExpires = Date.now() + 3600000; // 1 hora
+    await user.save();
+
+    // Crear enlace de restablecimiento
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    // Enviar email
+    await sendEmail({
+      to: email,
+      subject: "Restablece tu contraseña - PanasCOOP",
+      text: `Hola ${user.username},
+
+      Recibimos una solicitud para restablecer tu contraseña en PanasCOOP.
+      
+      Haz clic en el siguiente enlace para restablecer tu contraseña:
+      ${resetLink}
+
+      Este enlace expirará en 1 hora.
+      
+      Si no solicitaste este restablecimiento, ignora este correo.
+      
+      Un abrazo solidario de parte de PanasCOOP`,
+    });
+
+    res.json({ 
+      success: true,
+      message: "Se ha enviado un enlace de restablecimiento a tu correo electrónico" 
+    });
+
+  } catch (error) {
+    console.error("Error al enviar enlace de restablecimiento:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error interno del servidor al enviar enlace de restablecimiento" 
+    });
+  }
+};
+
+// Restablecer contraseña
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Token y nueva contraseña son requeridos" 
+      });
+    }
+
+    // Buscar usuario con el token válido y no expirado
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Token inválido o expirado" 
+      });
+    }
+
+    // Hashear la nueva contraseña
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    // Actualizar contraseña y limpiar tokens
+    user.password = passwordHash;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Contraseña restablecida exitosamente"
+    });
+
+  } catch (error) {
+    console.error("Error al restablecer contraseña:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error interno del servidor al restablecer contraseña" 
+    });
+  }
+};

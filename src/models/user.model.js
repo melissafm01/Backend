@@ -20,13 +20,12 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin", "superadmin"],
       default: "user",
     },
-
-       isActive: {
+    isActive: {
       type: Boolean,
       default: true,
       index: true
     },
-     isVerified: {
+    isVerified: {
       type: Boolean,
       default: false,     
     },
@@ -34,12 +33,21 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpires: {
+      type: Date,
+    },
+   
+    googleId: {
+      type: String,
+    },
     lastInteraction: {
-    type: Date,
-    default: Date.now
-  },
+      type: Date,
+      default: Date.now
+    },
     lastLogin: Date,
-
     profile: {
       firstName: String,
       lastName: String,
@@ -48,23 +56,20 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-   toJSON: {
+    toJSON: {
       transform: function(doc, ret) {
         delete ret.__v;
         delete ret.password;
+        delete ret.passwordResetToken; 
         return ret;
       }
     }
   }
 );
 
-
 // Índices para búsquedas rápidas
 userSchema.index({ username: 'text', email: 'text' });
 userSchema.index({ role: 1, isActive: 1 });
+userSchema.index({ passwordResetToken: 1 }); // Índice para búsquedas de reset
 
-
-export default mongoose.model("User", userSchema); 
-
-
-
+export default mongoose.model("User", userSchema);

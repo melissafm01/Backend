@@ -58,10 +58,13 @@ export const runNotificationCheck = async (io) => {
       console.log(`🏷️ Tipo: ${type}`);
 
       // 4. Verificar si el usuario aún está registrado como asistente
-     /* console.log(`🔍 Verificando asistencia del usuario...`);
+     console.log(`🔍 Verificando asistencia del usuario...`);
       const stillAttending = await Attendance.findOne({ 
         task: task._id, 
-        user: user._id 
+        $or:[
+          {user: user._id},
+          {email: user.email?.toLowerCase()}, 
+        ]
       });
       
       if (!stillAttending) {
@@ -69,7 +72,7 @@ export const runNotificationCheck = async (io) => {
         continue;
       }
       console.log(`✅ Usuario confirmado como asistente`);
-*/
+
       // 5. Calcular fechas
       const taskDate = dayjs(task.date);
       const notifyDate = taskDate.subtract(daysBefore, 'day').startOf('day');
@@ -138,7 +141,7 @@ export const runNotificationCheck = async (io) => {
               type: type || "recordatorio",
               timestamp: new Date(),
               read: false,
-              userId: user._id // Agregar userId para debug
+              userId: user._id
             };
 
             // Debug: verificar salas antes de enviar
@@ -181,8 +184,8 @@ export const startNotificationCron = (io) => {
   console.log("🕐 Configurando cron de notificaciones...");
   
   // Para pruebas: ejecutar cada minuto
-  // Para producción: cambiar a "0 1 * * *" (1am diariamente)
-  const cronPattern = "0 * * * *"; // Cada minuto para pruebas
+ 
+  const cronPattern = "* 7 * * *"; // Cada minuto para pruebas
   
   cron.schedule(cronPattern, () => {
     console.log(`\n⏰ CRON ACTIVADO: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`);
