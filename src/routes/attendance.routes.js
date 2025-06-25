@@ -22,7 +22,7 @@ router.get('/check/:taskId', checkAttendance);
 router.get("/export/:taskId", auth, exportAttendance);
 router.get("/:taskId", auth, getAttendance); 
 
-// Rutas de modificación
+
 router.post("/confirm", auth, confirmAttendance);
 router.delete("/cancel/:taskId", cancelAttendance);
 router.put("/:id", auth, updateAttendance);

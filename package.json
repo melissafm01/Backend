@@ -8,6 +8,7 @@
     "dev": "nodemon src/index.js"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.5",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
@@ -24,6 +25,7 @@
     "multer": "^2.0.1",
     "node-cron": "^4.0.6",
     "punycode": "^2.3.1",
+    "socket.io": "^4.8.1",
     "uuid": "^11.1.0",
     "zod": "^3.24.3"
   },

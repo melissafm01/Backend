@@ -13,7 +13,6 @@ export const auth = async (req, res, next) => {
       return res.status(401).json({ message: "No token, authorization denied" });
     }
 
-  
     const decoded = jwt.verify(token, TOKEN_SECRET);
 
    
@@ -23,7 +22,6 @@ export const auth = async (req, res, next) => {
       return res.status(401).json({ message: "User not found" });
     }
 
-    // Construir objeto de usuario para el request
     req.user = {
       id: user._id.toString(),
       _id: user._id,

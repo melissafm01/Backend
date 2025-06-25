@@ -28,7 +28,7 @@ export const createTask = async (req, res) => {
     let responsible = [];
     if (req.body.responsible) {
       try {
-        // Si viene como string JSON, parsearlo
+   
         if (typeof req.body.responsible === 'string') {
           responsible = JSON.parse(req.body.responsible);
         } else if (Array.isArray(req.body.responsible)) {
@@ -37,12 +37,10 @@ export const createTask = async (req, res) => {
         console.log("Responsible procesado:", responsible);
       } catch (parseError) {
         console.error("Error al parsear responsible:", parseError);
-        // Si falla el parse, tratarlo como string simple
         responsible = req.body.responsible ? [req.body.responsible] : [];
       }
     }
 
-    // === Validación de campos requeridos ===
     if (!title || !title.trim()) {
       return res.status(400).json({ message: 'El título es requerido' });
     }
@@ -94,7 +92,7 @@ export const createTask = async (req, res) => {
       console.log("=== Sin imagen - continuando sin imagen ===");
     }
 
-    // === Crear la tarea en la base de datos ===
+  
     console.log("=== Creando tarea en BD ===");
     console.log("Datos a guardar:", {
       title,

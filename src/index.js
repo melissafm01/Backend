@@ -1,19 +1,52 @@
 import 'dotenv/config'; 
 import app from "./app.js";
-import { PORT } from "./config.js";
+import { PORT ,FRONTEND_URL} from "./config.js";
 import { connectDB } from "./db.js";  
-import { startNotificationCron } from './notification.cron.js';
+import { startNotificationCron, runNotificationCheckManually } from './notification.cron.js';
+import http from 'http';
+import { Server } from 'socket.io';
+import { setupSocket } from './libs/socket.js';
 
 async function main() {
   try {
     await connectDB();
-    app.listen(PORT);
-    startNotificationCron();
-    console.log(`Listening on port http://localhost:${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV}`)
+    console.log("✅ Base de datos conectada");
+    
+    const server = http.createServer(app);
+
+    const io = new Server(server, {
+      cors: {
+        origin: FRONTEND_URL ,
+        credentials: true,
+      },
+    });
+
+       // Configurar socket
+    setupSocket(io);
+    console.log("✅ Socket.IO configurado");
+
+     // Guardar io en app para uso en rutas
+    app.set('socketio', io);
+
+    startNotificationCron(io);
+    console.log("✅ Cron de notificaciones iniciado");
+
+
+    app.listen(PORT , () =>{
+ 
+    console.log(`🚀Listening on port http://localhost:${PORT}`);
+    console.log(`📡Entorno: ${process.env.NODE_ENV}`)
+
+   
+      // PARA PRUEBAS: Ejecutar verificación manual después de 10 segundos
+      setTimeout(() => {
+        console.log("🧪 === EJECUTANDO PRUEBA MANUAL DE NOTIFICACIONES ===");
+        runNotificationCheckManually(io);
+      }, 10000);
+    });
+
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error al iniciar servidor:", error);
   }
 }
-
 main();

@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import Notification from "../models/notification.model.js";
+import User from "../models/user.model.js";
 import { sendPushNotification } from "../libs/sendPushNotification.js";
 
 export const saveNotificationConfig = async (req, res) => {
@@ -32,6 +33,7 @@ export const saveNotificationConfig = async (req, res) => {
       config
     });
   } catch (err) {
+    console.error("Error al guardar configuración:", err);
     res.status(500).json({ message: "Error al guardar configuración", error: err.message });
   }
 };
@@ -41,7 +43,8 @@ export const getUserNotifications = async (req, res) => {
             const configs = await Notification.find({user: req.user.id}).populate("task");
             res.json(configs);
         }catch(err){
-            res.status(500).json({message: "Error al obtener configuraciones", error: err.message});
+         console.error("Error al obtener configuraciones:", err);
+        res.status(500).json({message: "Error al obtener configuraciones", error: err.message});
         }
     }
 
@@ -49,7 +52,7 @@ export const deleteNotification = async (req, res) => {
   try {
     const notification = await Notification.findOneAndDelete({
       _id: req.params.id,
-      user: req.userId 
+      user: req.user.id 
     });
 
     if (!notification) {
@@ -58,6 +61,7 @@ export const deleteNotification = async (req, res) => {
 
     res.status(200).json({ message: "Notificación eliminada correctamente" });
   } catch (error) {
+   console.error("Error al eliminar notificación:", error);
     res.status(500).json({ message: "Error al eliminar notificación" });
   }
 };
@@ -85,7 +89,9 @@ export const updateNotification = async (req, res) => {
       message: "Notificación actualizada correctamente",
       data: notification
     });
-  } catch (err) {res.status(500).json({ 
+  } catch (err) {
+    console.error("Error al actualizar notificación:", err);
+    res.status(500).json({ 
       success: false,
       message: "Error al actualizar notificación",
       error: err.message,

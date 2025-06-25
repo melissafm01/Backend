@@ -104,7 +104,7 @@ export const deactivateAdmin = async (req, res) => {
   }
 };
 
-// Reactivar administrador 
+// Reactivar administrador (cambiar rol de user a admin)
 export const reactivateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -139,7 +139,7 @@ export const deleteAdmin = async (req, res) => {
       return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
-
+   // Solo actualiza isActive, mantiene el rol "admin"
     const deactivatedAdmin = await User.findByIdAndUpdate(
       id,
       { isActive: false },

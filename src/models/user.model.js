@@ -26,6 +26,13 @@ const userSchema = new mongoose.Schema(
       default: true,
       index: true
     },
+     isVerified: {
+      type: Boolean,
+      default: false,     
+    },
+    verificationToken: {
+      type: String,
+    },
 
     lastInteraction: {
     type: Date,
