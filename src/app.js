@@ -15,7 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://fronted-cyan.vercel.app",
+    origin: '*',
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], 
     allowedHeaders: ["Content-Type", "Authorization"], 
