@@ -13,14 +13,23 @@ import adminPanelRoutes from "./routes/adminPanel.routes.js";
 const app = express();
 
 
-app.use(
-  cors({
-    origin: '*',
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], 
-    allowedHeaders: ["Content-Type", "Authorization"], 
-  })
-);
+const allowedOrigins = [
+    'https://fronted-cyan.vercel.app'
+];
+
+// Configurar CORS
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORS not allowed'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 
 app.use(express.json());
 app.use(morgan("dev"));
