@@ -32,7 +32,7 @@ async function main() {
     console.log("✅ Cron de notificaciones iniciado");
 
 
-    app.listen(PORT , () =>{
+    server.listen(PORT , () =>{
  
     console.log(`🚀Listening on port http://localhost:${PORT}`);
     console.log(`📡Entorno: ${process.env.NODE_ENV}`)
