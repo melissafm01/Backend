@@ -2,7 +2,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
-// Obtener todos los administradores
+// Obtener todos los administradores (incluye activos e inactivos)
 export const getAllAdmins = async (req, res) => {
   try {
     const admins = await User.find({ role: "admin" })
@@ -14,7 +14,6 @@ export const getAllAdmins = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 // Obtener un administrador específico
 export const getAdminById = async (req, res) => {
@@ -39,13 +38,11 @@ export const updateAdmin = async (req, res) => {
     const { id } = req.params;
     const { username, email, password } = req.body;
     
-    // Verificar que el administrador existe
     const admin = await User.findOne({ _id: id, role: "admin" });
     if (!admin) {
       return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
-    // Verificar que el email no esté siendo usado por otro usuario
     if (email && email !== admin.email) {
       const existingUser = await User.findOne({ email, _id: { $ne: id } });
       if (existingUser) {
@@ -53,12 +50,10 @@ export const updateAdmin = async (req, res) => {
       }
     }
     
-    // Preparar datos para actualizar
     const updateData = {};
     if (username) updateData.username = username;
     if (email) updateData.email = email;
     
-    // Si se proporciona nueva contraseña, encriptarla
     if (password) {
       const passwordHash = await bcrypt.hash(password, 10);
       updateData.password = passwordHash;
@@ -79,7 +74,7 @@ export const updateAdmin = async (req, res) => {
   }
 };
 
-// Desactivar administrador (cambiar rol a user)
+// Desactivar administrador (SOLO cambia isActive a false - NO toca el rol)
 export const deactivateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -89,47 +84,47 @@ export const deactivateAdmin = async (req, res) => {
       return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
-    const deactivatedAdmin = await User.findByIdAndUpdate(
+    const updatedAdmin = await User.findByIdAndUpdate(
       id,
-      { role: "user" },
+      { isActive: false },
       { new: true }
     ).select('-password');
     
     res.json({
       message: "Administrador desactivado exitosamente",
-      admin: deactivatedAdmin
+      admin: updatedAdmin
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-// Reactivar administrador (cambiar rol de user a admin)
+// Reactivar administrador (SOLO cambia isActive a true)
 export const reactivateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
     
-    const user = await User.findOne({ _id: id, role: "user" });
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado o ya es administrador" });
+    const admin = await User.findOne({ _id: id, role: "admin" });
+    if (!admin) {
+      return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
-    const reactivatedAdmin = await User.findByIdAndUpdate(
+    const updatedAdmin = await User.findByIdAndUpdate(
       id,
-      { role: "admin" },
+      { isActive: true },
       { new: true }
     ).select('-password');
     
     res.json({
       message: "Administrador reactivado exitosamente",
-      admin: reactivatedAdmin
+      admin: updatedAdmin
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-// Eliminar administrador completamente
+// Eliminar administrador (cambia el rol a user - esto lo quitará del panel de admins)
 export const deleteAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -139,32 +134,34 @@ export const deleteAdmin = async (req, res) => {
       return res.status(404).json({ message: "Administrador no encontrado" });
     }
     
-   // Solo actualiza isActive, mantiene el rol "admin"
-    const deactivatedAdmin = await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       id,
-      { isActive: false },
+      { role: "user" }, // Cambia el rol a user
       { new: true }
     ).select('-password');
     
     res.json({
-      message: "Administrador desactivado exitosamente (rol conservado)",
-      admin: deactivatedAdmin
+      message: "Administrador eliminado exitosamente (rol cambiado a usuario)",
+      user: updatedUser
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-
 // Obtener estadísticas de administradores
 export const getAdminStats = async (req, res) => {
   try {
     const totalAdmins = await User.countDocuments({ role: "admin" });
+    const activeAdmins = await User.countDocuments({ role: "admin", isActive: true });
+    const inactiveAdmins = await User.countDocuments({ role: "admin", isActive: false });
     const totalUsers = await User.countDocuments({ role: "user" });
     const totalSuperAdmins = await User.countDocuments({ role: "superadmin" });
     
     res.json({
       totalAdmins,
+      activeAdmins,
+      inactiveAdmins,
       totalUsers,
       totalSuperAdmins,
       totalAccounts: totalAdmins + totalUsers + totalSuperAdmins
