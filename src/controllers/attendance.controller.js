@@ -77,7 +77,7 @@ export const confirmAttendance = async (req, res) => {
     const newAttendance = await Attendance.create([attendanceData], { session });
 
     
-    // Las notificaciones ahora solo se crean manualmente desde la configuración
+   
 
     // Preparar correo de confirmación para autenticados
     if (req.user && req.user.email) {

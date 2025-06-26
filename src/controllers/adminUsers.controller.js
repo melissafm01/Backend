@@ -73,7 +73,7 @@ export const updateUser = async (req, res) => {
       return res.status(403).json({ message: "No se puede modificar el superadministrador" });
     }
     
-    // Verificar que un admin no pueda modificar a otro admin (excepto superadmin)
+    // Verificar que un admin no pueda modificar a otro admin 
     if (user.role === 'admin') {
       return res.status(403).json({ message: "Solo el super Administrador puede modificar un administrador" });
     }

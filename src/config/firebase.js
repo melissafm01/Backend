@@ -14,7 +14,7 @@ if (process.env.FIREBASE_CONFIG) {
   serviceAccount = raw;
 
 }else {
-  // ✅ En local: lee desde archivo
+ 
   const serviceAccountPath = path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT_PATH);
   serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf-8'));
 }

@@ -2,7 +2,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
-// Obtener todos los administradores (incluye activos e inactivos)
+// Obtener todos los administradores 
 export const getAllAdmins = async (req, res) => {
   try {
     const admins = await User.find({ role: "admin" })
@@ -74,7 +74,7 @@ export const updateAdmin = async (req, res) => {
   }
 };
 
-// Desactivar administrador (SOLO cambia isActive a false - NO toca el rol)
+// Desactivar administrador 
 export const deactivateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -99,7 +99,7 @@ export const deactivateAdmin = async (req, res) => {
   }
 };
 
-// Reactivar administrador (SOLO cambia isActive a true)
+// Reactivar administrador 
 export const reactivateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -124,7 +124,7 @@ export const reactivateAdmin = async (req, res) => {
   }
 };
 
-// Eliminar administrador (cambia el rol a user - esto lo quitará del panel de admins)
+// Eliminar administrador 
 export const deleteAdmin = async (req, res) => {
   try {
     const { id } = req.params;
