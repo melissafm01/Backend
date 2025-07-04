@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 
+
 dotenv.config();
 
 let serviceAccount;
@@ -27,5 +28,12 @@ if (!admin.apps.length) {
 }
 
 const bucket = admin.storage().bucket();
+
+export const getAuth = () => {
+  if (!admin.apps.length) {
+    throw new Error("Firebase Admin no está inicializado");
+  }
+  return admin.auth();
+};
 
 export { admin, bucket };
