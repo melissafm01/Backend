@@ -101,7 +101,8 @@ res.cookie("token", token, {
   httpOnly: true,
   secure: true,
   sameSite: "None",
-  path: "/",          
+  path: "/",
+  domain: ".vercel.app",          
  maxAge: 1000 * 60 * 60 * 24, 
 });
 
@@ -187,7 +188,8 @@ res.cookie("token", token_jwt, {
   httpOnly: true,
   secure: true,
   sameSite: "None",
-  path: "/",          
+  path: "/",    
+  domain: ".vercel.app",      
  maxAge: 1000 * 60 * 60 * 24, 
 });
 
@@ -322,7 +324,8 @@ export const createInitialSuperAdmin = async (req, res) => {
   httpOnly: true,
   secure: true,
   sameSite: "None",
-  path: "/",           
+  path: "/", 
+  domain: ".vercel.app",          
   maxAge: 1000 * 60 * 60 * 24, l
 });
 
@@ -389,7 +392,8 @@ export const logout = async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "None", 
-    path: "/",        
+    path: "/",
+    domain: ".vercel.app",        
     expires: new Date(0),
   });
   return res.sendStatus(200);
@@ -434,7 +438,8 @@ export const loginWithGoogle = async (req, res) => {
   httpOnly: true,
   secure: true,
   sameSite: "None",
-  path: "/",           
+  path: "/",  
+  domain: ".vercel.app",         
   maxAge: 1000 * 60 * 60 * 24, l
 });
 
