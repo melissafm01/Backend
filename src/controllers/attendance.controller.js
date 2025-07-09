@@ -391,7 +391,7 @@ export const updateAttendance = async (req, res) => {
   }
 };
 
-// Eliminar asistente manual
+
 // Eliminar asistente manual
 export const deleteAttendance = async (req, res) => {
   const session = await mongoose.startSession();
@@ -535,7 +535,6 @@ export const checkAttendance = async (req, res) => {
     res.status(500).json({ message: "Error al verificar asistencia" });
   }
 };
-
 
 
 export const getUserAttendances = async (req, res) => {

@@ -228,7 +228,7 @@ const getEmailTemplate = (content, title = "PanasCOOP") => {
                 <strong>"Juntos construimos el cambio que queremos ver"</strong>
             </div>
             <div class="footer-text" style="margin-top: 15px; font-size: 12px;">
-                Si no deseas recibir más correos de este tipo, 
+                Si no deseas recibir más mensajes de este tipo, 
                 <a href="#" style="color: #059669;">puedes darte de baja aquí</a>
             </div>
         </div>
@@ -237,14 +237,14 @@ const getEmailTemplate = (content, title = "PanasCOOP") => {
 </html>`;
 };
 
-// Template para verificación de email 
+// Template para verificación de email - OPTIMIZADO PARA EVITAR SPAM
 export const getVerificationEmailTemplate = (username, verificationLink) => {
   const content = `
     <div class="content">
-        <div class="greeting">¡Hola ${username}! 👋</div>
+        <div class="greeting">Hola ${username}</div>
         
         <div class="message">
-            ¡Bienvenido/a a nuestra gran comunidad solidaria! 🎉
+            Te damos la bienvenida a nuestra comunidad solidaria.
             <br><br>
             Estás a un paso de formar parte de PanasCOOP, donde conectamos comunidades 
             y fomentamos el cooperativismo social para crear un impacto positivo.
@@ -252,61 +252,61 @@ export const getVerificationEmailTemplate = (username, verificationLink) => {
         
         <div class="button-container">
             <a href="${verificationLink}" class="button">
-                ✅ Verificar mi cuenta
+                Activar mi cuenta
             </a>
         </div>
         
         <div class="info-box">
-            <div class="title">¿Qué puedes hacer en PanasCOOP?</div>
+            <div class="title">Qué puedes hacer en PanasCOOP:</div>
             <div class="details">
                 • Crear y participar en actividades solidarias<br>
-                • Conectar con otros voluntarios apasionados<br>
+                • Conectar con otros voluntarios comprometidos<br>
                 • Contribuir a causas importantes de tu comunidad<br>
                 • Ser parte del cambio que quieres ver
             </div>
         </div>
         
         <div class="warning">
-            <strong>Importante:</strong> Si no creaste esta cuenta, simplemente ignora este correo.
+            <strong>Nota:</strong> Si no creaste esta cuenta, simplemente ignora este mensaje.
         </div>
     </div>
   `;
   
-  return getEmailTemplate(content, "Verifica tu cuenta - PanasCOOP");
+  return getEmailTemplate(content, "Activa tu cuenta - PanasCOOP");
 };
 
-// Template para reenvío de verificación
+// Template para reenvío de verificación - OPTIMIZADO
 export const getResendVerificationTemplate = (username, verificationLink) => {
   const content = `
     <div class="content">
-        <div class="greeting">¡Hola ${username}! 🔄</div>
+        <div class="greeting">Hola ${username}</div>
         
         <div class="message">
-            Aquí tienes nuevamente el enlace para verificar tu cuenta en PanasCOOP.
+            Aquí tienes nuevamente el enlace para activar tu cuenta en PanasCOOP.
             <br><br>
-            No te preocupes, ¡todos necesitamos un recordatorio de vez en cuando!
+            No te preocupes, todos necesitamos un recordatorio de vez en cuando.
         </div>
         
         <div class="button-container">
             <a href="${verificationLink}" class="button">
-                ✅ Verificar mi cuenta ahora
+                Activar mi cuenta ahora
             </a>
         </div>
         
         <div class="warning">
-            <strong>Recuerda:</strong> Si no creaste esta cuenta, simplemente ignora este correo.
+            <strong>Recuerda:</strong> Si no creaste esta cuenta, simplemente ignora este mensaje.
         </div>
     </div>
   `;
   
-  return getEmailTemplate(content, "Verificación de cuenta - PanasCOOP");
+  return getEmailTemplate(content, "Activación de cuenta - PanasCOOP");
 };
 
-// Template para restablecimiento de contraseña
+// Template para restablecimiento de contraseña - OPTIMIZADO
 export const getPasswordResetTemplate = (username, resetLink) => {
   const content = `
     <div class="content">
-        <div class="greeting">¡Hola ${username}! 🔐</div>
+        <div class="greeting">Hola ${username}</div>
         
         <div class="message">
             Recibimos una solicitud para restablecer tu contraseña en PanasCOOP.
@@ -316,12 +316,12 @@ export const getPasswordResetTemplate = (username, resetLink) => {
         
         <div class="button-container">
             <a href="${resetLink}" class="button">
-                🔑 Restablecer mi contraseña
+                Cambiar mi contraseña
             </a>
         </div>
         
         <div class="info-box">
-            <div class="title">⏰ Información importante:</div>
+            <div class="title">Información importante:</div>
             <div class="details">
                 Este enlace expirará en <strong>1 hora</strong> por tu seguridad.
             </div>
@@ -329,19 +329,19 @@ export const getPasswordResetTemplate = (username, resetLink) => {
         
         <div class="warning">
             <strong>¿No solicitaste este cambio?</strong><br>
-            Si no fuiste tú, puedes ignorar este correo. Tu contraseña actual seguirá siendo válida.
+            Si no fuiste tú, puedes ignorar este mensaje. Tu contraseña actual seguirá siendo válida.
         </div>
     </div>
   `;
   
-  return getEmailTemplate(content, "Restablece tu contraseña - PanasCOOP");
+  return getEmailTemplate(content, "Cambio de contraseña - PanasCOOP");
 };
 
-// Template para recordatorios de tareas
+// Template para recordatorios de tareas - OPTIMIZADO
 export const getReminderTemplate = (username, taskTitle, taskDate) => {
   const content = `
     <div class="content">
-        <div class="greeting">¡Hola ${username}! ⏰</div>
+        <div class="greeting">Hola ${username}</div>
         
         <div class="message">
             Te recordamos que tienes una actividad próxima en PanasCOOP.
@@ -350,17 +350,17 @@ export const getReminderTemplate = (username, taskTitle, taskDate) => {
         </div>
         
         <div class="info-box">
-            <div class="title">📅 Detalles de tu actividad:</div>
+            <div class="title">Detalles de tu actividad:</div>
             <div class="details">
                 <strong>Actividad:</strong> ${taskTitle}<br>
                 <strong>Fecha:</strong> ${taskDate}<br>
-                <strong>Estado:</strong> Confirmado ✅
+                <strong>Estado:</strong> Confirmado
             </div>
         </div>
         
         <div style="text-align: center; margin: 30px 0;">
             <div style="font-size: 18px; color: #065f46; font-weight: 600;">
-                ¡Te esperamos! 🤝
+                Te esperamos
             </div>
         </div>
         
@@ -373,11 +373,11 @@ export const getReminderTemplate = (username, taskTitle, taskDate) => {
   return getEmailTemplate(content, `Recordatorio: ${taskTitle} - PanasCOOP`);
 };
 
-// Template para confirmación de asistencia 
+// Template para confirmación de asistencia - CORREGIDO CON DISEÑO
 export const getConfirmationTemplate = (username, taskTitle, taskDate) => {
   const content = `
     <div class="content">
-        <div class="greeting">¡Hola ${username}! 🤔</div>
+        <div class="greeting">Hola ${username}</div>
         
         <div class="message">
             Queremos confirmar tu participación en una actividad próxima.
@@ -386,18 +386,18 @@ export const getConfirmationTemplate = (username, taskTitle, taskDate) => {
         </div>
         
         <div class="info-box">
-            <div class="title">📋 Detalles de la actividad:</div>
+            <div class="title">Detalles de la actividad:</div>
             <div class="details">
                 <strong>Actividad:</strong> ${taskTitle}<br>
                 <strong>Fecha:</strong> ${taskDate}<br>
-                <strong>Estado:</strong> Pendiente de confirmación ⏳
+                <strong>Estado:</strong> Pendiente de confirmación
             </div>
         </div>
         
         <div class="confirmation-info">
-            <div class="title">📧 Para confirmar tu asistencia:</div>
+            <div class="title">Para confirmar tu asistencia:</div>
             <div class="details">
-                Por favor, responde a este correo indicando si podrás asistir o no.
+                Por favor, responde a este mensaje indicando si podrás asistir o no.
                 <br><br>
                 Puedes escribir simplemente:
                 <br>• <strong>"SÍ"</strong> o <strong>"CONFIRMO"</strong> si vas a asistir
@@ -406,11 +406,11 @@ export const getConfirmationTemplate = (username, taskTitle, taskDate) => {
         </div>
         
         <div class="message" style="margin-top: 25px; text-align: center; color: #059669; font-size: 16px; font-weight: 600;">
-            ¡Esperamos tu confirmación! 🤝
+            Esperamos tu confirmación
         </div>
         
         <div style="margin-top: 25px; padding: 20px; background-color: #f0fdf4; border-left: 4px solid #059669; border-radius: 0 8px 8px 0;">
-            <div style="font-weight: 600; color: #065f46; margin-bottom: 8px;">💡 ¿Por qué es importante tu confirmación?</div>
+            <div style="font-weight: 600; color: #065f46; margin-bottom: 8px;">¿Por qué es importante tu confirmación?</div>
             <div style="color: #374151; font-size: 14px;">
                 Nos ayuda a preparar los recursos necesarios, coordinar el espacio y asegurar una experiencia increíble para todos los participantes.
             </div>
@@ -422,10 +422,10 @@ export const getConfirmationTemplate = (username, taskTitle, taskDate) => {
     </div>
   `;
   
-  return getEmailTemplate(content, `¿Confirmas tu participación en: ${taskTitle}?`);
+  return getEmailTemplate(content, `Confirma tu participación en: ${taskTitle}`);
 };
 
-// Función principal
+// Función principal OPTIMIZADA PARA EVITAR RETRASOS
 export const sendEmail = async ({ to, subject, text, html }) => {
   const msg = {
     to,
@@ -433,15 +433,36 @@ export const sendEmail = async ({ to, subject, text, html }) => {
     subject,
     text,
     html,
+    // Configuraciones adicionales para evitar spam y mejorar deliverability
+    headers: {
+      'X-Priority': '3',
+      'X-MSMail-Priority': 'Normal',
+      'Importance': 'Normal'
+    },
+    // Configuración para mejorar la reputación del remitente
+    replyTo: process.env.FROM_EMAIL,
+    // Configuración para categorización correcta
+    categories: ['transactional', 'notification'],
+    // Configuración para tracking básico
+    trackingSettings: {
+      clickTracking: {
+        enable: false
+      },
+      openTracking: {
+        enable: false
+      }
+    }
   };
 
   try {
-    await sgMail.send(msg);
-    console.log(`✅ Correo enviado a ${to}`);
+    const response = await sgMail.send(msg);
+    console.log(`✅ Mensaje enviado a ${to} - ID: ${response[0].headers['x-message-id']}`);
+    return response;
   } catch (error) {
-    console.error(`❌ Error al enviar correo a ${to}:`, error.message);
+    console.error(`❌ Error al enviar mensaje a ${to}:`, error.message);
     if (error.response) {
-      console.error(error.response.body);
+      console.error('Detalles del error:', error.response.body);
     }
+    throw error;
   }
 };
