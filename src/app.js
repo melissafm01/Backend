@@ -9,6 +9,7 @@ import notificationRoutes from "./routes/notifications.routes.js";
 import attendanceRoutes from "./routes/attendance.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import adminPanelRoutes from "./routes/adminPanel.routes.js";
+import comunidadRoutes from "./routes/comunidad.routes.js";
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/admin-panel", adminPanelRoutes);
 app.use("/api", taksRoutes);
 app.use("/api/attendances", attendanceRoutes);
+app.use("/api/comunidades", comunidadRoutes);
 
 
 app.get('/', (req, res) => {
